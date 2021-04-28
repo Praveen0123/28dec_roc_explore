@@ -1,0 +1,47 @@
+<ng-container *ngIf="{
+    userProfileModel: userProfileModel$ | async,
+    roiModel: roiModel$ |async,
+    accordionState: accordionState$ | async,
+    savedIdList: savedIdList$ | async
+  } as data">
+
+
+  <section class="flex h-full">
+
+
+    <aside class="flex-none shadow-md w-96">
+
+      <roc-modeling-tool-controls [userProfileModel]="data.userProfileModel"
+                                  [roiModel]="data.roiModel"
+                                  [accordionState]="data.accordionState"
+                                  (onCurrentInformationSubmitted)="onCurrentInformationSubmitted($event)"
+                                  (markCurrentInformationAsInitialized)="markCurrentInformationAsInitialized()"
+                                  (onCareerGoalSubmitted)="onCareerGoalSubmitted($event)"
+                                  (onEducationCostSubmitted)="onEducationCostSubmitted($event)"
+                                  (onEducationFinancingSubmitted)="onEducationFinancingSubmitted($event)"
+                                  (onResetAll)="onResetAll()"
+                                  (onPanelChange)="onPanelChange($event)"></roc-modeling-tool-controls>
+
+    </aside>
+
+    <section class="flex-auto ml-4">
+      <div class="px-5 py-4 mt-4 mr-4 bg-white shadow-md place-items-center">
+
+
+        <roc-roi-model-call-to-actions [roiModelDto]="data.roiModel"
+                                       (onClone)="onClone($event)"
+                                       (onShare)="onShare($event)"></roc-roi-model-call-to-actions>
+
+
+        <roc-user-profile-summary [roiModel]="data.roiModel"></roc-user-profile-summary>
+
+
+        <roc-lifetime-earnings-graph [roiModel]="data.roiModel"></roc-lifetime-earnings-graph>
+
+
+      </div>
+    </section>
+
+  </section>
+
+</ng-container>

@@ -1,0 +1,462 @@
+{
+  "version": 1,
+  "projects": {
+    "roc-modeling": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss",
+          "displayBlock": true,
+          "changeDetection": "OnPush"
+        }
+      },
+      "root": "apps/roc-modeling",
+      "sourceRoot": "apps/roc-modeling/src",
+      "prefix": "roc",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "allowedCommonJsDependencies": [
+              "@vantage-point/ddd-core",
+              "graphql-tag",
+              "zen-observable"
+            ],
+            "outputPath": "dist/roc-modeling/browser",
+            "index": "apps/roc-modeling/src/index.html",
+            "main": "apps/roc-modeling/src/main.ts",
+            "polyfills": "apps/roc-modeling/src/polyfills.ts",
+            "tsConfig": "apps/roc-modeling/tsconfig.app.json",
+            "aot": true,
+            "assets": [
+              "apps/roc-modeling/src/favicon.ico",
+              "apps/roc-modeling/src/assets"
+            ],
+            "styles": [
+              "apps/roc-modeling/src/scss/styles.scss"
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "apps/roc-modeling/src/app/features/compare/components/_scss",
+                "apps/roc-modeling/src/scss/common"
+              ]
+            },
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/roc-modeling/src/environments/environment.ts",
+                  "with": "apps/roc-modeling/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "10mb",
+                  "maximumError": "12mb"
+                },
+                {
+                  "type": "anyScript",
+                  "maximumWarning": "5mb",
+                  "maximumError": "6mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "browserTarget": "roc-modeling:build"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "roc-modeling:build:production"
+            }
+          }
+        },
+        "extract-i18n": {
+          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "options": {
+            "browserTarget": "roc-modeling:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/roc-modeling/tsconfig.app.json",
+              "apps/roc-modeling/tsconfig.spec.json",
+              "apps/roc-modeling/tsconfig.editor.json",
+              "apps/roc-modeling/tsconfig.server.json",
+              "apps/roc-modeling/tsconfig.serverless.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/roc-modeling/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/roc-modeling/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "prebuild": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx tailwind roc-modeling"
+            ],
+            "parallel": true
+          }
+        },
+        "graphql-codegen": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx graphql-codegen --config apps/roc-modeling/codegen.yml"
+          }
+        },
+        "tailwind": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx postcss apps/roc-modeling/src/scss/vendors/tailwindcss/tailwind.css -o apps/roc-modeling/src/scss/vendors/tailwindcss/generated/tailwind.css --config apps/roc-modeling/src/scss/vendors/tailwindcss/postcss.config.js --env={args.env}"
+          }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/roc-modeling/server",
+            "main": "apps/roc-modeling/server.ts",
+            "tsConfig": "apps/roc-modeling/tsconfig.server.json",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "apps/roc-modeling/src/app/features/compare/components/_scss",
+                "apps/roc-modeling/src/scss/common"
+              ]
+            }
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "apps/roc-modeling/src/environments/environment.ts",
+                  "with": "apps/roc-modeling/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "roc-modeling:build",
+            "serverTarget": "roc-modeling:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "roc-modeling:build:production",
+              "serverTarget": "roc-modeling:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "roc-modeling:build:production",
+            "serverTarget": "roc-modeling:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serverless": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/roc-modeling/serverless",
+            "main": "apps/roc-modeling/serverless.ts",
+            "tsConfig": "apps/roc-modeling/tsconfig.serverless.json",
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "apps/roc-modeling/src/app/features/compare/components/_scss",
+                "apps/roc-modeling/src/scss/common"
+              ]
+            }
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "apps/roc-modeling/src/environments/environment.ts",
+                  "with": "apps/roc-modeling/src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "build-sls": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "nx run roc-modeling:build:production",
+              "nx run roc-modeling:serverless:production"
+            ],
+            "parallel": false
+          }
+        },
+        "serve-sls": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "serverless offline start --config=apps/roc-modeling/serverless.yml"
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "npx nx prebuild roc-modeling --args='--env=production'",
+              "npx nx build-sls roc-modeling",
+              "npx serverless deploy --config=apps/roc-modeling/serverless.yml"
+            ],
+            "parallel": false
+          }
+        },
+        "destroy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "command": "npx serverless remove --config=apps/roc-modeling/serverless.yml"
+          }
+        }
+      }
+    },
+    "roc-modeling-e2e": {
+      "root": "apps/roc-modeling-e2e",
+      "sourceRoot": "apps/roc-modeling-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/roc-modeling-e2e/cypress.json",
+            "tsConfig": "apps/roc-modeling-e2e/tsconfig.e2e.json",
+            "devServerTarget": "roc-modeling:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "roc-modeling:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/roc-modeling-e2e/tsconfig.e2e.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/roc-modeling-e2e/**/*"
+            ]
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "echo \"deploy roc-modeling-e2e\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "roc-modeling-gateway": {
+      "root": "apps/roc-modeling-gateway",
+      "sourceRoot": "apps/roc-modeling-gateway/src",
+      "projectType": "application",
+      "prefix": "roc-modeling-gateway",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/roc-modeling-gateway",
+            "main": "apps/roc-modeling-gateway/src/main.ts",
+            "tsConfig": "apps/roc-modeling-gateway/tsconfig.app.json",
+            "assets": [],
+            "webpackConfig": "apps/roc-modeling-gateway/webpack-build.config.js"
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/roc-modeling-gateway/src/environments/environment.ts",
+                  "with": "apps/roc-modeling-gateway/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "waitUntilTargets": [
+              "roc-modeling-gateway:generate"
+            ],
+            "buildTarget": "roc-modeling-gateway:build"
+          }
+        },
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "apps/roc-modeling-gateway/tsconfig.app.json",
+              "apps/roc-modeling-gateway/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!apps/roc-modeling-gateway/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/roc-modeling-gateway/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "generate": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              "npx graphql-codegen --config apps/roc-modeling-gateway/codegen.yml"
+            ]
+          }
+        },
+        "deploy": {
+          "builder": "@nrwl/workspace:run-commands",
+          "options": {
+            "commands": [
+              {
+                "command": "echo \"deploy roc-modeling-gateway\""
+              }
+            ]
+          }
+        }
+      }
+    },
+    "slider-circle": {
+      "projectType": "library",
+      "root": "libs/slider-circle",
+      "sourceRoot": "libs/slider-circle/src",
+      "prefix": "roc-lib",
+      "architect": {
+        "lint": {
+          "builder": "@angular-devkit/build-angular:tslint",
+          "options": {
+            "tsConfig": [
+              "libs/slider-circle/tsconfig.lib.json",
+              "libs/slider-circle/tsconfig.spec.json"
+            ],
+            "exclude": [
+              "**/node_modules/**",
+              "!libs/slider-circle/**/*"
+            ]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/slider-circle/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      },
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/angular",
+    "analytics": false
+  },
+  "schematics": {
+    "@nrwl/workspace": {
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/cypress": {
+      "cypress-project": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/node": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/nest": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/express": {
+      "application": {
+        "linter": "tslint"
+      },
+      "library": {
+        "linter": "tslint"
+      }
+    },
+    "@nrwl/angular:application": {
+      "unitTestRunner": "jest",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "unitTestRunner": "jest",
+      "strict": true
+    }
+  },
+  "defaultProject": "roc-modeling"
+}

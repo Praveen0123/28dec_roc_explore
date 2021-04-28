@@ -1,0 +1,12 @@
+overwrite: true
+schema: 'https://api-development.returnon.college/graphql'
+documents: 'apps/roc-modeling/src/app/core/graphql/**/*.graphql'
+generates:
+  apps/roc-modeling/src/generated/graphql.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-apollo-angular'
+  apps/roc-modeling/graphql.schema.json:
+    plugins:
+      - 'introspection'

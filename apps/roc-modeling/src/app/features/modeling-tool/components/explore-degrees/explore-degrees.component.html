@@ -1,0 +1,141 @@
+<form [formGroup]="formGroup"
+      (ngSubmit)="onFormSubmit()">
+
+  <section class="flex flex-col w-full">
+
+    <!-- GOAL LOCATION  -->
+    <div class="my-1">
+      <vp-auto-complete formControlName="location"
+                        [touched]="formGroup.get('location').touched"
+                        [autoCompleteType]="autoCompleteTypeEnum.Location"
+                        [label]="'Location'"
+                        [shouldLabelFloat]="false"
+                        [placeholder]="'zip, or city, state'"
+                        [formFieldAppearance]="'standard'"></vp-auto-complete>
+    </div>
+
+
+    <!-- DEGREE LEVEL -->
+    <div class="my-1">
+
+      <mat-form-field class="w-full">
+        <mat-label>Degree level</mat-label>
+        <mat-select placeholder="choose a degree"
+                    formControlName="degreeLevel"
+                    [compareWith]="compareEducationLevelFunction"
+                    required>
+
+          <mat-option *ngFor="let item of availableEducationLevel; let i=index;"
+                      [value]="item">
+            {{availableEducationLevel[i].displayName}}
+          </mat-option>
+
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+
+    <!-- GOAL DEGREE PROGRAM -->
+    <div class="mt-1">
+
+      <vp-auto-complete formControlName="degreeProgram"
+                        [touched]="formGroup.get('degreeProgram').touched"
+                        [autoCompleteType]="autoCompleteTypeEnum.Major"
+                        [label]="'Degree Program'"
+                        [shouldLabelFloat]="false"
+                        [placeholder]="'choose a program'"
+                        [isRequired]="true"
+                        [formFieldAppearance]="'standard'"></vp-auto-complete>
+    </div>
+
+
+    <!-- GOAL OCCUPATION -->
+    <div class="mt-1"
+         *ngIf="!occupationList || occupationList.length === 0">
+      <div class="flex justify-between w-full">
+
+        <div class="flex flex-col">
+          <div class="flex flex-row">
+            <span class="px-1 font-extrabold text-2xs "
+                  required> Career Goal </span>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-gap-x-2">
+          <div class="flex flex-row text-xs cursor-pointer"
+               (click)="openDialogSchoolFind()">
+            <span class="text-sm text-blue-400 material-icons">
+              search
+            </span>
+            <span class="pl-2 text-xs text-blue-400"> Search All Careers </span>
+          </div>
+        </div>
+
+      </div>
+      <vp-auto-complete formControlName="occupation"
+                        [touched]="formGroup.get('occupation').touched"
+                        [autoCompleteType]="autoCompleteTypeEnum.Occupation"
+                        [label]="''"
+                        [shouldLabelFloat]="false"
+                        [placeholder]="'Enter Keywords'"
+                        [isRequired]="true"
+                        [formFieldAppearance]="'standard'"></vp-auto-complete>
+
+    </div>
+    <div class="mt-1"
+         *ngIf="occupationList && occupationList.length > 0">
+
+      <div class="flex justify-between w-full">
+
+        <div class="flex flex-col">
+          <div class="flex flex-row">
+            <span class="px-1 font-extrabold text-2xs "> Career Goal </span>
+          </div>
+        </div>
+
+        <div class="flex flex-col flex-gap-x-2 ">
+          <div class="flex flex-row text-xs cursor-pointer"
+               (click)="openDialogSchoolFind()">
+            <span class="text-sm text-blue-400 material-icons">
+              search
+            </span>
+            <span class="pl-2 text-xs text-colorApplication-serachAllProgram"> Search All Careers </span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <mat-form-field class="w-full">
+        <mat-label>Career Goal</mat-label>
+        <mat-select placeholder="choose a career"
+                    formControlName="occupation"
+                    [compareWith]="compareOccupationFunction"
+                    required>
+
+          <mat-option *ngFor="let item of occupationList"
+                      [value]="item">
+            {{item.name}}
+          </mat-option>
+
+        </mat-select>
+      </mat-form-field>
+
+    </div>
+
+
+    <!-- RETIREMENT AGE  -->
+    <div class="mt-6 mb-1">
+
+      <roc-slider label="Retirement Age"
+                  formControlName="retirementAge"
+                  [min]="retirementAgeMinimum"
+                  [max]="retirementAgeMaximum"
+                  class="w-full"></roc-slider>
+
+    </div>
+
+  </section>
+
+</form>

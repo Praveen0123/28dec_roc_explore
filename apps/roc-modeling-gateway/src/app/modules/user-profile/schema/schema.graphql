@@ -1,0 +1,13 @@
+type UserProfile @key(fields: "id")
+{
+  id: ID!
+  firstName: String!
+  lastName: String!
+  fullName: String!
+  email: String
+}
+
+extend type Query
+{
+  userById(id: ID!): UserProfile
+}

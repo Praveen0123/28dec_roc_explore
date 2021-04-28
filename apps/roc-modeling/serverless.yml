@@ -1,0 +1,61 @@
+service: roc-modeling-app
+
+plugins:
+  - serverless-apigw-binary
+  - serverless-offline
+  - serverless-plugin-warmup
+  - serverless-domain-manager
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  timeout: 10
+  region: ${opt:region, 'us-east-2'}
+  stage: ${opt:stage, 'dev'}
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action:
+        - 'lambda:InvokeFunction'
+      Resource: '*'
+
+package:
+  exclude:
+    - ./**
+  include:
+    - 'node_modules/aws-serverless-express/**'
+    - 'node_modules/binary-case/**'
+    - 'node_modules/type-is/**'
+    - 'node_modules/media-typer/**'
+    - 'node_modules/mime-types/**'
+    - 'node_modules/mime-db/**'
+    - 'dist/roc-modeling/**'
+    - 'apps/roc-modeling/src/lambda.js'
+
+custom:
+  apigwBinary:
+    types:
+      - '*/*'
+  domains:
+    prod: modeling.returnon.college
+    staging: staging-modeling.returnon.college
+    dev: dev-modeling.returnon.college
+  customDomain:
+    domainName: ${self:custom.domains.${self:provider.stage}}
+    basePath: ''
+    certificateName: '*.returnon.college'
+    createRoute53Record: true
+    endpointType: 'edge'
+
+functions:
+  api:
+    handler: apps/roc-modeling/src/lambda.handler
+    events:
+      - http:
+          cors: true
+          path: '/{proxy+}'
+          method: GET
+      - http:
+          cors: true
+          path: '/'
+          method: GET
+    warmup: true

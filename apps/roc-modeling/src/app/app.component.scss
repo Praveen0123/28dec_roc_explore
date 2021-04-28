@@ -1,0 +1,4 @@
+router-outlet+ ::ng-deep * {
+  // 4 rem is header height
+  height: calc(100% - 4rem);
+}

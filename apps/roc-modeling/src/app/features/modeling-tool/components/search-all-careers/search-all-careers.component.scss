@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.mat-row:nth-child(even) {
+  background-color: #eff6f9;
+  height: 25px !important;
+}
+
+tr.mat-header-row {
+  height: 25px !important;
+}
+
+th.mat-header-cell,
+td.mat-cell,
+td.mat-footer-cell {
+  border-bottom-width: 0px !important;
+}
+
+.colorApplication-horizontalLine {
+  border-color: #56b0b4;
+}

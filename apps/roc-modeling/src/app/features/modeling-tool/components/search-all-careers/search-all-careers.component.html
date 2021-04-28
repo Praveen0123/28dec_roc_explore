@@ -1,0 +1,276 @@
+<section>
+  <div class="grid grid-flow-col grid-rows-1 gap-2">
+    <!-- HEADING OF THE DIALOG BOX -->
+    <div class="flex-4">
+      <h1 class="font-bold">Search All Careers</h1>
+    </div>
+
+    <!-- POPUP CLOSE ICON -->
+    <div class="text-blue-600 cursor-pointer ml-80 flex-4">
+      <mat-icon aria-hidden="false"
+                aria-label="clear"
+                class="content-end pl-28 ml-80"
+                (click)="close()">clear</mat-icon>
+    </div>
+  </div>
+</section>
+
+<!-- HORIZONTAL LINE -->
+<div class="border-t-2 colorApplication-horizontalLine"></div>
+
+<section class="relative w-full">
+  <form [formGroup]="searchAllCareersForm">
+    <!-- FILTERS -->
+
+    <div class="mt-5 shadow-md">
+      <div class="grid grid-flow-col grid-rows-1 gap-4 pt-5 pl-5 pr-5">
+        <!-- SEARCH CAREERS FILTER -->
+        <div class="flex-6 w-96">
+          <mat-form-field class="w-96">
+            <mat-label>Search Careers</mat-label>
+            <i class="text-blue-600 fa fa-search"
+               aria-hidden="true"
+               matPrefix></i>
+            <input matInput
+                   placeholder="Search Careers"
+                   formControlName="searchCareers"
+                   [matAutocomplete]="autoSearchCareer" />
+            <button mat-button
+                    *ngIf="searchAllCareersForm.controls.searchCareers.dirty"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="clearSearchFieldSearchCareer()">
+              <fa-icon icon="times"></fa-icon>
+            </button>
+
+            <mat-autocomplete autoActiveFirstOption
+                              #autoSearchCareer="matAutocomplete"
+                              [displayWith]="displayWithSearchCareer"
+                              (optionSelected)="onsearchCareerSelected($event)">
+              <mat-option *ngFor="let searchCareer of filteredSearchCareer | async"
+                          [value]="searchCareer">
+                {{ searchCareer }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <!-- LOCATION FILTER -->
+        <div class="-ml-6 w-44 flex-3">
+          <mat-form-field class="w-full">
+            <mat-label>Location</mat-label>
+
+            <input matInput
+                   placeholder="Zip or city,State"
+                   formControlName="location" />
+          </mat-form-field>
+        </div>
+
+
+
+        <!-- DEGREE ALIGNMENT FILTER -->
+        <div class=" w-44 flex-3">
+          <mat-form-field class="w-full">
+            <mat-label>Degree Alignment with career</mat-label>
+            <mat-select (selectionChange)="
+                degreeAlignmentWithCareerSelected($event.value)
+              "
+                        placeholder="Select Alignment"
+                        formControlName="degreeAlignmentWithCareer">
+              <mat-option [value]="option"
+                          *ngFor="let option of degreeAlignmentWithCareer">{{ option }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+
+
+      <div class="grid grid-flow-col grid-rows-1 gap-2 pl-5 pr-5">
+        <!-- CAREER BY JOB FAMILIES FILTER -->
+        <div class="w-auto flex-2">
+          <mat-form-field class="">
+            <mat-label>Job Families</mat-label>
+            <input matInput
+                   placeholder="Select"
+                   formControlName="jobFamilies"
+                   [matAutocomplete]="autoJobFamilies" />
+            <button mat-button
+                    *ngIf="searchAllCareersForm.controls.jobFamilies.dirty"
+                    matSuffix
+                    mat-icon-button
+                    aria-label="Clear"
+                    (click)="clearSearchFieldJobFamilies()">
+              <fa-icon icon="times"></fa-icon>
+            </button>
+
+            <mat-autocomplete autoActiveFirstOption
+                              #autoJobFamilies="matAutocomplete"
+                              [displayWith]="displayWithJobFamilies"
+                              (optionSelected)="onJobFamiliesSelected($event)">
+              <mat-option *ngFor="let option of filteredJobFamilies | async"
+                          [value]="option">
+                {{ option }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+        </div>
+
+        <!-- ANNUAL SALARY FILTER -->
+        <div class="w-auto ml-5 flex-3">
+          <roc-slider label="Annual Salary"
+                      formControlName="annualSalary"
+                      min="0"
+                      max="25"
+                      class="font-semibold"
+                      (valueChanges)="filterAnnualSalary($event)"></roc-slider>
+        </div>
+
+        <!-- CAREER DEMAND FILTER -->
+        <div class="w-auto flex-2">
+          <mat-form-field class="-ml-4">
+            <mat-label>Career Demand</mat-label>
+            <mat-select placeholder="Select"
+                        formControlName="careerDemand"
+                        (selectionChange)="careerDemandSelected($event.value)">
+              <mat-option [value]="option"
+                          *ngFor="let option of careerDemand">{{ option }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- CAREER Growth FILTER -->
+        <div class="w-auto flex-2">
+          <mat-form-field class="">
+            <mat-label>Career Growth</mat-label>
+            <mat-select placeholder="Select"
+                        formControlName="careerGrowth"
+                        (selectionChange)="careerGrowthSelected($event.value)">
+              <mat-option [value]="option"
+                          *ngFor="let option of careerGrowth">{{ option }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+
+      </div>
+    </div>
+
+    <!-- TABLE FOR SEARCH ALL DEGREE PROGRAM -->
+
+    <div class="w-full mt-5">
+      <table mat-table
+             class="w-full"
+             [dataSource]="filterDegreeProgram">
+        <!-- Career Name Column -->
+
+        <ng-container matColumnDef="Career Name">
+          <th mat-header-cell
+              *matHeaderCellDef>
+            <b class="text-black">Career Name</b>
+          </th>
+          <td mat-cell
+              *matCellDef="let element">
+            {{ element.careerName }}
+          </td>
+        </ng-container>
+
+        <!-- Job Families Column -->
+        <ng-container matColumnDef="Job Families">
+          <th mat-header-cell
+              *matHeaderCellDef>
+            <b class="text-black">Job Families</b>
+          </th>
+          <td mat-cell
+              *matCellDef="let element">
+            {{ element.jobFamilies }}
+          </td>
+        </ng-container>
+
+        <!-- Demand Column -->
+        <ng-container matColumnDef="Demand">
+          <th mat-header-cell
+              *matHeaderCellDef>
+            <b class="text-black">Demand</b>
+          </th>
+          <td mat-cell
+              *matCellDef="let element">
+            {{ element.demand }}
+          </td>
+        </ng-container>
+
+        <!-- Growth Column -->
+        <ng-container matColumnDef="Growth">
+          <th mat-header-cell
+              *matHeaderCellDef>
+            <b class="text-black">Growth</b>
+          </th>
+          <td mat-cell
+              *matCellDef="let element">
+            {{ element.growth }}
+
+          </td>
+        </ng-container>
+
+
+
+        <!-- Annual Salary Column -->
+        <ng-container matColumnDef="Annual Salary">
+          <th mat-header-cell
+              *matHeaderCellDef>
+            <b class="text-black">Annual Salary</b>
+          </th>
+          <td mat-cell
+              *matCellDef="let element">
+            {{ element.annualSalary }}K
+          </td>
+        </ng-container>
+
+        <!-- Align Column -->
+        <ng-container matColumnDef="Align">
+          <th mat-header-cell
+              *matHeaderCellDef>
+            <b class="text-black">Align</b>
+          </th>
+          <td mat-cell
+              *matCellDef="let element">
+            <fa-icon *ngIf="element.align == 'Recommended Programs'"
+                     [icon]="['fas', 'signal']"></fa-icon>
+            <fa-icon *ngIf="element.align == 'Closely Related Programs'"
+                     [icon]="['fas', 'signal-4']"></fa-icon>
+            <fa-icon *ngIf="element.align == 'Programs in a Related Field'"
+                     [icon]="['fas', 'signal-3']"></fa-icon>
+            <fa-icon *ngIf="element.align == 'Somewhat Related Field'"
+                     [icon]="['fas', 'signal-2']"></fa-icon>
+
+            <fa-icon *ngIf="element.align == 'Any Programs Regardless of Alignment'"
+                     [icon]="['fas', 'signal-1']"></fa-icon>
+          </td>
+        </ng-container>
+
+        <!-- Symbol Column -->
+        <ng-container matColumnDef="symbol">
+          <th mat-header-cell
+              *matHeaderCellDef></th>
+          <td mat-cell
+              *matCellDef="let element"
+              class="cursor-pointer"
+              (click)="captureDegreeProgram(element)">
+            <i class="text-blue-600 fa fa-plus"
+               aria-hidden="true"></i>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row
+            *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row
+            *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]"></mat-paginator>
+    </div>
+  </form>
+</section>

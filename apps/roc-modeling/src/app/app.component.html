@@ -1,0 +1,16 @@
+<ng-container *ngIf="{
+    isOffCanvasOpen: isOffCanvasOpen$ | async
+  } as data">
+
+
+  <section class="h-full antialiased text-gray-900">
+    <roc-header [isOffCanvasOpen]="data.isOffCanvasOpen"
+                (onShowSaved)="onShowSaved($event)"></roc-header>
+
+    <roc-off-canvas-saved-models [class.active]="data.isOffCanvasOpen"></roc-off-canvas-saved-models>
+
+    <router-outlet></router-outlet>
+
+  </section>
+
+</ng-container>
